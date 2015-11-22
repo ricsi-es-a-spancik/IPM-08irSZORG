@@ -43,7 +43,9 @@ void Scheduler::schedule(const std::vector<std::string>& raw_packets)
         else
         {
             auto packet = parse_packet(raw_packet);
-            act[packet->frame_id_]->add_packet(packet);
+            auto result = act.find(packet->frame_id_);
+            if(result != act.end())
+                result->second->add_packet(packet);
         }
     }
 
@@ -122,8 +124,6 @@ void Scheduler::subroutine_s()
             frame->transmit_next_packet(); //transmitting last packet
         }
     }
-
-    throw std::runtime_error("Not implemented.");
 }
 
 bool Scheduler::is_first_packet(const std::string& raw_packet) const

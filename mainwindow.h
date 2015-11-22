@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "scheduler.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    Scheduler scheduler;
 };
 
 #endif // MAINWINDOW_H

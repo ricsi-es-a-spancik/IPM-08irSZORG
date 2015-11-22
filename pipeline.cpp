@@ -5,22 +5,23 @@
 
 PipeLine::PipeLine()
 {
-
 }
 
 void PipeLine::check_reservations_length(unsigned slot)
 {
-    if(reservations_.size() < slot)
+    if(reservations_.size() <= slot)
     {
         if(reservations_.size() <= slot / 2)
-            reservations_.resize(slot, std::make_pair(false, std::shared_ptr<Frame>(nullptr)));
+            reservations_.resize(slot+1, std::make_pair(false, std::shared_ptr<Frame>(nullptr)));
         else
-            reservations_.resize(reservations_.size()*2, std::make_pair(false, std::shared_ptr<Frame>(nullptr)));
+            reservations_.resize(reservations_.size()*2+1, std::make_pair(false, std::shared_ptr<Frame>(nullptr)));
     }
 }
 
 void PipeLine::make_reservation(unsigned slot, std::shared_ptr<Frame> frame)
 {
+    check_reservations_length(slot);
+
     if(reservations_[slot].first)
     {
         throw std::logic_error("The given slot has already been reserved.");
@@ -34,6 +35,8 @@ void PipeLine::make_reservation(unsigned slot, std::shared_ptr<Frame> frame)
 
 void PipeLine::cancel_reservation(unsigned slot)
 {
+    check_reservations_length(slot);
+
     if(!reservations_[slot].first)
     {
         throw std::logic_error("The given slot reservation cannot be canceled because it is not a reserved slot.");
@@ -63,6 +66,8 @@ void PipeLine::make_last_packet_reservation(std::shared_ptr<Frame> frame)
 
 bool PipeLine::is_slot_reserved(unsigned slot)
 {
+    check_reservations_length(slot);
+
     return reservations_[slot].first;
 }
 
