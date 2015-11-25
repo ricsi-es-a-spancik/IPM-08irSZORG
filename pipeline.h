@@ -22,9 +22,9 @@ public:
     void cancel_reservation(unsigned slot);
     void cancel_last_packet_reservation(std::shared_ptr<Frame> frame); //for type1 only
     void make_last_packet_reservation(std::shared_ptr<Frame> frame); //for type1 only
-    bool is_slot_reserved(unsigned slot);
+    bool is_slot_reserved(unsigned slot) const;
     bool all_slots_reserved(const slot_interval& interval);
-    std::shared_ptr<Frame> slot_reserved_by(unsigned slot);
+    std::shared_ptr<Frame> slot_reserved_by(unsigned slot) const;
     std::shared_ptr<Frame> smallest_frame_with_reserved_slot(const slot_interval& interval);
 
     std::vector<pipeline_datatype> reservations_in_interval(const slot_interval& interval);

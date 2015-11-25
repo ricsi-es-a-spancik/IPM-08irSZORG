@@ -37,8 +37,10 @@ public:
     slot_interval slack_interval() const;
     unsigned next_packet_deadline() const;
     unsigned packet_deadline(unsigned packet_idx) const;
-    slot_interval packet_designated_interval(unsigned  packet_idx) const;
+    slot_interval next_packet_designated_interval() const;
+    slot_interval packet_designated_interval(unsigned packet_idx) const;
 
+    bool has_packet() const;
     bool is_last_packet() const;
     void add_packet(std::shared_ptr<Packet> packet);
     void transmit_next_packet();

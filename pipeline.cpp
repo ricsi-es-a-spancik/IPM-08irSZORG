@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <QApplication>
 
 PipeLine::PipeLine()
 {
@@ -64,11 +65,13 @@ void PipeLine::make_last_packet_reservation(std::shared_ptr<Frame> frame)
     make_reservation(slack.first + std::distance(interval_res.begin(), result), frame);
 }
 
-bool PipeLine::is_slot_reserved(unsigned slot)
+bool PipeLine::is_slot_reserved(unsigned slot) const
 {
-    check_reservations_length(slot);
-
-    return reservations_[slot].first;
+    //check_reservations_length(slot);
+    if(reservations_.size() <= slot)
+        return false;
+    else
+        return reservations_[slot].first;
 }
 
 bool PipeLine::all_slots_reserved(const slot_interval& interval)
@@ -78,9 +81,12 @@ bool PipeLine::all_slots_reserved(const slot_interval& interval)
                 [](const pipeline_datatype& pair) -> bool {return pair.first;});
 }
 
-std::shared_ptr<Frame> PipeLine::slot_reserved_by(unsigned slot)
+std::shared_ptr<Frame> PipeLine::slot_reserved_by(unsigned slot) const
 {
-    return reservations_[slot].second;
+    if(reservations_.size() <= slot)
+        return std::shared_ptr<Frame>(nullptr);
+    else
+        return reservations_[slot].second;
 }
 
 std::shared_ptr<Frame> PipeLine::smallest_frame_with_reserved_slot(const slot_interval& interval)

@@ -35,6 +35,11 @@ unsigned Frame::packet_deadline(unsigned packet_idx) const
     return packet_excepted_arrival(packet_idx) + jitter_ + periodicity_;
 }
 
+slot_interval Frame::next_packet_designated_interval() const
+{
+    return packet_designated_interval(packets_transmitted_);
+}
+
 unsigned Frame::next_packet_deadline() const
 {
     if(packets_to_transmit.size() == 0)
@@ -46,6 +51,11 @@ unsigned Frame::next_packet_deadline() const
 slot_interval Frame::packet_designated_interval(unsigned packet_idx) const
 {
     return slot_interval(packet_excepted_arrival(packet_idx) + jitter_, packet_deadline(packet_idx));
+}
+
+bool Frame::has_packet() const
+{
+    return packets_transmitted_ < packets_added_;
 }
 
 bool Frame::is_last_packet() const
