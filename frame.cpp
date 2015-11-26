@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <climits>
 
+unsigned Frame::pending_packets_overall_;
+
 std::shared_ptr<Frame> Frame::create_virtual_frame(frame_type type)
 {
     return std::make_shared<Frame>("", type, 0, 0, 0, 0, 0, 0);
@@ -12,6 +14,11 @@ Frame::Frame(const std::string& id, frame_type type, unsigned packet_num, unsign
     id_(id), type_(type), packet_num_(packet_num), value_(value), periodicity_(periodicity), jitter_(jitter), slack_(slack), arrival_(arrival)
 {
 
+}
+
+Frame::~Frame()
+{
+    pending_packets_overall_ -= packets_added_ - packets_transmitted_;
 }
 
 double Frame::density()
@@ -65,6 +72,7 @@ bool Frame::is_last_packet() const
 
 void Frame::add_packet(std::shared_ptr<Packet> packet)
 {
+    ++pending_packets_overall_;
     if(packets_added_++ < packet_num_)
         packets_to_transmit.push(packet);
     else
@@ -73,6 +81,7 @@ void Frame::add_packet(std::shared_ptr<Packet> packet)
 
 void Frame::transmit_next_packet()
 {
+    --pending_packets_overall_;
     if(packets_to_transmit.size() != 0)
     {
         packets_to_transmit.pop();
@@ -86,6 +95,11 @@ std::shared_ptr<Packet> Frame::next_packet_to_transmit() const
         return std::shared_ptr<Packet>(nullptr);
     else
         return packets_to_transmit.front();
+}
+
+unsigned Frame::pending_packets_overall()
+{
+    return pending_packets_overall_;
 }
 
 bool Frame::Compare::operator() (const Frame& fst, const Frame& snd) const

@@ -37,6 +37,7 @@ private:
     QLabel* act_label_;
     QLabel* act1_label_;
     QLabel* transmitted_label_;
+    QLabel* pending_packets_label_;
     void setup_labels();
     void refresh_label_contents();
     void align_labels();
@@ -45,6 +46,7 @@ private:
     std::vector<QLabel*> last_packet_reservations_;
     std::map<std::string, std::pair<std::vector<unsigned>, slot_interval>> packet_sequences;
     std::vector<std::vector<QLabel*>> packet_labels_;
+    std::vector<QLabel*> frame_id_labels_;
     void parse_packet_sequences();
     void setup_pipelines();
     void refresh_pipline_contents();

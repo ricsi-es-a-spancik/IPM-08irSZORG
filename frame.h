@@ -19,10 +19,13 @@ private:
     unsigned packets_added_ = 0;
     unsigned packets_transmitted_ = 0;
     std::queue<std::shared_ptr<Packet>, std::list<std::shared_ptr<Packet>>> packets_to_transmit;
+
+    static unsigned pending_packets_overall_;
 public:
     static std::shared_ptr<Frame> create_virtual_frame(frame_type type);
 
     Frame(const std::string& id, frame_type type, unsigned packet_num, unsigned value, unsigned periodicity, unsigned jitter, unsigned slack, unsigned arrival);
+    ~Frame();
 
     const std::string id_;
     const frame_type type_;
@@ -45,6 +48,7 @@ public:
     void add_packet(std::shared_ptr<Packet> packet);
     void transmit_next_packet();
     std::shared_ptr<Packet> next_packet_to_transmit() const;
+    static unsigned pending_packets_overall();
 
     class Compare
     {

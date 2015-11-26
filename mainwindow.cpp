@@ -51,6 +51,7 @@ void MainWindow::setup_labels()
     act_label_ = new QLabel(this);
     act1_label_ = new QLabel(this);
     transmitted_label_ = new QLabel(this);
+    pending_packets_label_ = new QLabel(this);
 
     refresh_label_contents();
 }
@@ -63,6 +64,7 @@ void MainWindow::refresh_label_contents()
     act_label_->setText(("Act: " + scheduler_.act_frames()).c_str());
     act1_label_->setText(("Act1: " + scheduler_.act1_frames()).c_str());
     transmitted_label_->setText(("Transmitted packet of: " + scheduler_.get_last_transfered_packet()).c_str());
+    pending_packets_label_->setText(("Pending packets: " + std::to_string(Frame::pending_packets_overall())).c_str());
 }
 
 void MainWindow::align_labels()
@@ -84,8 +86,11 @@ void MainWindow::align_labels()
     act1_label_->setGeometry(this->size().width()/20,2*size.height(),this->size().width() - size.width(),size.height());
     act1_label_->setFont(font);
 
-    transmitted_label_->setGeometry(QRect(QPoint(this->size().width()/20, this->size().height()-2*size.height()), size));
+    transmitted_label_->setGeometry(QRect(QPoint(this->size().width()/20, this->size().height()-3*size.height()), size));
     transmitted_label_->setFont(font);
+
+    pending_packets_label_->setGeometry(QRect(QPoint(this->size().width()/20, this->size().height()-2*size.height()), size));
+    pending_packets_label_->setFont(font);
 }
 
 void MainWindow::parse_packet_sequences()
@@ -116,6 +121,7 @@ void MainWindow::parse_packet_sequences()
 
     for(auto& packet_seq : packet_sequences)
     {
+        frame_id_labels_.push_back(new QLabel(packet_seq.first.c_str(), this));
         packet_seq.second.first.resize(packet_sequences_raw_.size() + col_count_, 0);
         for(unsigned i=packet_seq.second.second.first; i<packet_seq.second.second.second; ++i)
             packet_seq.second.first[i] = 2;
@@ -157,7 +163,7 @@ void MainWindow::refresh_pipline_contents()
         if(scheduler_.get_pipeline().is_slot_reserved(slot))
         {
             last_packet_reservations_[i]->setText(scheduler_.get_pipeline().slot_reserved_by(slot)->id_.c_str());
-            last_packet_reservations_[i]->setStyleSheet("QLabel { background-color : yellow; border-style: solid; border-width: 1px; border-color : black; }");
+            last_packet_reservations_[i]->setStyleSheet("QLabel { background-color : orange; border-style: solid; border-width: 1px; border-color : black; }");
         }
         else
         {
@@ -179,7 +185,7 @@ void MainWindow::refresh_pipline_contents()
                 packet_labels_[j][i]->setStyleSheet("QLabel { background-color : white; border-style: solid; border-width: 1px; border-color : black; }");
                 break;
             case 1:
-                packet_labels_[j][i]->setStyleSheet("QLabel { background-color : yellow; border-style: solid; border-width: 1px; border-color : black; }");
+                packet_labels_[j][i]->setStyleSheet("QLabel { background-color : orange; border-style: solid; border-width: 1px; border-color : black; }");
                 break;
             case 2:
                 packet_labels_[j][i]->setStyleSheet("QLabel { background-color : aqua; border-style: solid; border-width: 1px; border-color : black; }");
@@ -211,6 +217,9 @@ void MainWindow::align_pipelines()
         {
             packet_labels_[j][i]->setGeometry(QRect(pos.x() + i*size.width(), pos.y()+j*size.height(), size.width(), size.height()));
         }
+
+        frame_id_labels_[j]->setGeometry(QRect(pos.x() - size.width() / 2, pos.y()+j*size.height(), size.width() / 2, size.height()));
+        frame_id_labels_[j]->setFont(QFont("Arial", size.height() / 4));
     }
 }
 

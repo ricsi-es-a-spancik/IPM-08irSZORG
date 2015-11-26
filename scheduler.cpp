@@ -100,13 +100,18 @@ void Scheduler::subroutine_a(std::shared_ptr<Frame> frame)
     }
 
     if(frame_tick->packet_num_ != 0)
+    {
         act.erase(frame_tick->id_);
+        ++total_frames_rejected_;
+    }
 
     act[frame->id_] = frame;
 }
 
 void Scheduler::subroutine_s()
 {
+    last_transfered_packet_ = "";
+
     if(pipeline_.is_slot_reserved(time_))
     {
         auto frame = pipeline_.slot_reserved_by(time_);
